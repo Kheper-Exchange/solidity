@@ -118,9 +118,12 @@ public class LinkedListDebug {
         //------------------------------
 
         push(1,1, true);
-        push(6,5, true);
-        push(5,6, true);
-        push(5,9, true);
+        push(5,5, true);
+        push(6,6, true);
+        push(7,9, true);
+        push(8,9, true);
+        printList();
+        pop();
         printList();
 
 
