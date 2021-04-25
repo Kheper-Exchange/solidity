@@ -7,7 +7,7 @@ public class LinkedListDebug {
 
     private static final Map<Integer, Node> linkedList = new HashMap<>();
     private static int currentIndex = 0;
-
+    private static boolean asc = true; //false for descending
 
     public static int getCurrentIndex(){
         return currentIndex;
@@ -40,7 +40,7 @@ public class LinkedListDebug {
     }
 
     //----------------------------------------------------
-    public static void push(int index, int num, boolean asc){
+    public static void push(int index, int num){
         Node node = new Node();
         node.previousIndex = currentIndex;
         node.value = num;
@@ -57,10 +57,10 @@ public class LinkedListDebug {
         currentIndex = linkedList.get(currentIndex).previousIndex;
     }
 
-    public static void insertAtAsc(int index, int num, boolean asc){
+    public static void insertAtAsc(int index, int num){
         if(linkedList.containsKey(index)) return; //must remove it first!
-        if(currentIndex==index) return;
-        if(currentIndex<index){push(index,num,true); return;}
+        if(currentIndex==index) return; //must remove it first!
+        if(currentIndex<index){push(index,num); return;}
 
         int closestIndex = findClosestIndexAsc(index);
         Node node = new Node();
@@ -71,8 +71,31 @@ public class LinkedListDebug {
         Node closestNode = linkedList.get(closestIndex);
         closestNode.previousIndex = index;
     }
-    public static void truncateAt(int searchIndex, boolean asc){
-       // currentIndex = asc?findClosestIndexAsc(searchIndex):findClosestIndexDesc(searchIndex);
+
+
+    public static void remove(int index){
+        if(!linkedList.containsKey(index) || index==0) return; //must exist!
+        if(currentIndex==index) {pop(); return;}
+
+        int pointerIndex = findPointerIndex(index);
+        int skipToIndex = linkedList.get(index).previousIndex;
+        linkedList.get(pointerIndex).previousIndex = skipToIndex;
+    }
+
+    private static int findPointerIndex(int index) {
+        int atCurrent = currentIndex;
+        int prev = linkedList.get(atCurrent).previousIndex;
+        while(prev!=index){
+            atCurrent = prev;
+            prev = linkedList.get(atCurrent).previousIndex;
+        }
+        return atCurrent;
+    }
+
+
+    public static void truncateAt(int index){
+        if(!linkedList.containsKey(index) || index==0 || index==currentIndex) return; //must exist!
+        currentIndex = index;
     }
 
     public static int findClosestIndexAsc(int searchIndex){
@@ -83,7 +106,6 @@ public class LinkedListDebug {
             prev = linkedList.get(atCurrent).previousIndex;
         }
         return atCurrent;
-
     }
 
 
@@ -117,13 +139,13 @@ public class LinkedListDebug {
         Gson gson = new Gson();
         //------------------------------
 
-        push(1,1, true);
-        push(3,5, true);
-        push(5,6, true);
-        push(7,9, true);
-        push(9,9, true);
+        push(1,1);
+        push(3,5);
+        push(5,6);
+        push(7,9);
+        push(9,9);
         printList();
-        insertAtAsc(14,9,true);
+        truncateAt(5);
 
 
         printList();
