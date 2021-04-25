@@ -1,0 +1,132 @@
+import com.google.gson.Gson;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class LinkedListDebug {
+
+    private static final Map<Integer, Node> linkedList = new HashMap<>();
+    private static int currentIndex = 0;
+
+
+    public static int getCurrentIndex(){
+        return currentIndex;
+    }
+
+    public static void setCurrentIndex(int num){
+        currentIndex = num;
+    }
+
+//----------------------------------------------------
+
+    public static int getValueAt(int index){
+        return linkedList.get(index).getValue();
+    }
+
+    public static void setValueAt(int index, int num){
+        Node change = linkedList.get(index);
+        change.setValue(num);
+        linkedList.put(index, change);
+    }
+
+    public int getPreviousIndexAt(int index){
+        return linkedList.get(index).getPreviousIndex();
+    }
+
+    public static void setPreviousIndexAt(int index, int num){
+        Node change = linkedList.get(index);
+        change.setPreviousIndex(num);
+        linkedList.put(index, change);
+    }
+
+    //----------------------------------------------------
+    public static void push(int index, int num, boolean asc){
+        Node node = new Node();
+        node.setPreviousIndex(currentIndex);
+        node.setValue(num);
+        if((asc&&index<=currentIndex) || (!asc&&index>=currentIndex)){
+            //don't do it, must remove first
+        }
+        else {
+            linkedList.put(index, node);
+            currentIndex = index;
+        }
+    }
+
+    public static void pop(){
+        currentIndex = linkedList.get(currentIndex).getPreviousIndex();
+    }
+
+    public static void insertAt(int searchIndex, int index, int num, boolean asc){
+        int closestIndex = asc?findClosestIndexAsc(searchIndex):findClosestIndexDesc(searchIndex);
+        Node node = new Node();
+        node.setPreviousIndex(linkedList.get(closestIndex).getPreviousIndex());
+        node.setValue(num);
+        linkedList.put(index, node);
+
+        Node closestNode = linkedList.get(closestIndex);
+        closestNode.setPreviousIndex(index);
+    }
+    public static void truncateAt(int searchIndex, boolean asc){
+        currentIndex = asc?findClosestIndexAsc(searchIndex):findClosestIndexDesc(searchIndex);
+    }
+
+    public static int findClosestIndexAsc(int searchIndex){
+        int tmpIndex = currentIndex;
+        while(searchIndex<tmpIndex){
+            tmpIndex = linkedList.get(tmpIndex).getPreviousIndex();
+        }
+        return tmpIndex;
+    }
+    public static int findClosestIndexDesc(int searchIndex){
+        int tmpIndex = currentIndex;
+        while(searchIndex>tmpIndex){
+            tmpIndex = linkedList.get(tmpIndex).getPreviousIndex();
+        }
+        return tmpIndex;
+    }
+
+
+
+    public static void printList(){
+        String out = ""+currentIndex;
+
+        int iterator = currentIndex;
+        while(iterator>0) {
+            Node node = linkedList.get(iterator);
+            int previousIndex = node.getPreviousIndex();
+            int value = node.getValue();
+//            System.out.println(iterator + ":" + previousIndex + ":" + value);
+            out = "{"+iterator + ":" + previousIndex + ":" + value+"}<--"+out;
+            iterator = previousIndex;
+        }
+        out = "end<--"+out;
+
+        System.out.println(out);
+    }
+
+
+
+
+    public static void main(String[] args){
+        //setup
+        Node first = new Node();
+        first.setPreviousIndex(0);
+        first.setValue(0);
+        linkedList.put(0,first);
+        Gson gson = new Gson();
+        //------------------------------
+
+        push(1,1, true);
+        push(6,5, true);
+        push(5,6, true);
+        push(5,9, true);
+        printList();
+
+
+
+
+
+
+    }
+}
