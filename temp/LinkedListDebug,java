@@ -57,8 +57,12 @@ public class LinkedListDebug {
         currentIndex = linkedList.get(currentIndex).previousIndex;
     }
 
-    public static void insertAt(int searchIndex, int index, int num, boolean asc){
-        int closestIndex = asc?findClosestIndexAsc(searchIndex):findClosestIndexDesc(searchIndex);
+    public static void insertAtAsc(int index, int num, boolean asc){
+        if(linkedList.containsKey(index)) return; //must remove it first!
+        if(currentIndex==index) return;
+        if(currentIndex<index){push(index,num,true); return;}
+
+        int closestIndex = findClosestIndexAsc(index);
         Node node = new Node();
         node.previousIndex = (linkedList.get(closestIndex).previousIndex);
         node.value = num;
@@ -68,22 +72,18 @@ public class LinkedListDebug {
         closestNode.previousIndex = index;
     }
     public static void truncateAt(int searchIndex, boolean asc){
-        currentIndex = asc?findClosestIndexAsc(searchIndex):findClosestIndexDesc(searchIndex);
+       // currentIndex = asc?findClosestIndexAsc(searchIndex):findClosestIndexDesc(searchIndex);
     }
 
     public static int findClosestIndexAsc(int searchIndex){
-        int tmpIndex = currentIndex;
-        while(searchIndex<tmpIndex){
-            tmpIndex = linkedList.get(tmpIndex).previousIndex;
+        int atCurrent = currentIndex;
+        int prev = linkedList.get(atCurrent).previousIndex;
+        while(prev>searchIndex){
+            atCurrent = prev;
+            prev = linkedList.get(atCurrent).previousIndex;
         }
-        return tmpIndex;
-    }
-    public static int findClosestIndexDesc(int searchIndex){
-        int tmpIndex = currentIndex;
-        while(searchIndex>tmpIndex){
-            tmpIndex = linkedList.get(tmpIndex).previousIndex;
-        }
-        return tmpIndex;
+        return atCurrent;
+
     }
 
 
@@ -118,15 +118,15 @@ public class LinkedListDebug {
         //------------------------------
 
         push(1,1, true);
-        push(5,5, true);
-        push(6,6, true);
+        push(3,5, true);
+        push(5,6, true);
         push(7,9, true);
-        push(8,9, true);
+        push(9,9, true);
         printList();
-        pop();
-        printList();
+        insertAtAsc(14,9,true);
 
 
+        printList();
 
 
 
