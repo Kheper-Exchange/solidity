@@ -2,6 +2,7 @@ import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class LinkedListDebug {
 
@@ -49,10 +50,7 @@ public static void putNode(int index, int previousIndex, int num){
 
     //----------------------------------------------------
     public static void push(int index, int num){
-        if((asc&&index<=currentIndex) || (!asc&&index>=currentIndex)){
-            //don't do it, must remove first
-        }
-        else {
+        if(!((asc&&index<=currentIndex) || (!asc&&index>=currentIndex))) {
             putNode(index, currentIndex, num);
             currentIndex = index;
         }
@@ -110,7 +108,7 @@ public static void putNode(int index, int previousIndex, int num){
 
 
 
-    public static void printList(){
+    public static String printList(){
         String out = ""+currentIndex;
 
         int iterator = currentIndex;
@@ -119,12 +117,38 @@ public static void putNode(int index, int previousIndex, int num){
             int previousIndex = node.previousIndex;
             int value = node.value;
 //            System.out.println(iterator + ":" + previousIndex + ":" + value);
-            out = "{"+iterator + ":" + previousIndex + ":" + value+"}<--"+out;
+            out = out+"-->"+"{"+iterator + ":" + previousIndex + ":" + value+"}";
             iterator = previousIndex;
         }
-        out = "end<--"+out;
+        out = out+"-->end";
 
-        System.out.println(out);
+//        System.out.println(out);
+        return out;
+    }
+
+    public static boolean validate(String map){
+    map = map.replaceAll("-","");
+    String[] sp = map.split(">");
+    if(!sp[sp.length-1].equals("end")) {
+        return false;
+    }
+
+    int current = Integer.parseInt(sp[0]);
+    int next = current;
+
+    for(int t=1;t<sp.length-1;t++){
+        String val = sp[t];
+        val = val.replaceAll("\\{","");
+        val = val.replaceAll("}","");
+        String[] ssp = val.split(":");
+
+        current = Integer.parseInt(ssp[0]);
+        if(next!=current){
+            return false;
+        }
+        next = Integer.parseInt(ssp[1]);
+    }
+    return true;
     }
 
 
@@ -136,24 +160,52 @@ public static void putNode(int index, int previousIndex, int num){
         first.previousIndex = (0);
         first.value = (0);
         linkedList.put(0,first);
-        Gson gson = new Gson();
         //------------------------------
+        while(true){
+            int rint = rnd.nextInt(5)+1;
+            if(rint==1){action1();}
+            if(rint==2){action2();}
+            if(rint==3){action3();}
+            if(rint==4){action4();}
+            if(rint==5){action5();}
 
-        push(1,1);
-        push(3,5);
-        push(5,6);
-        push(7,9);
-        push(9,9);
-        printList();
-        insertAtAsc(4,5);
+            String map = printList();
+//            System.out.println(map);
+            boolean validate = validate(map);
+            if(!validate){
+                System.out.println(rint);
+                System.out.println(map);
+                break;
+            }
 
 
-        printList();
-
-
+        }
 
 
     }
+
+    private static Random rnd = new Random();
+    public static void action1(){
+        push(rnd.nextInt(10000)+1, rnd.nextInt(10000)+1);
+    }
+
+    public static void action2(){
+        pop();
+    }
+
+    public static void action3(){
+        insertAtAsc(rnd.nextInt(10000)+1, rnd.nextInt(10000)+1);
+    }
+
+    public static void action4(){
+        remove(rnd.nextInt(10000)+1);
+    }
+
+    public static void action5(){
+        truncateAt(rnd.nextInt(10000)+1);
+    }
+
+
 }
 class Node {
     public Integer previousIndex = null;
