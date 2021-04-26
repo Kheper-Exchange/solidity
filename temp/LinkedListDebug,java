@@ -205,8 +205,8 @@ public static void putNode(int index, int previousIndex, int num){
     private static Random rnd = new Random();
     public static void action1(){
         System.out.println("---------------");
-        int a = rnd.nextInt(1000)+1;
-        int b = rnd.nextInt(1000)+1;
+        int a = rnd.nextInt(10)+1;
+        int b = rnd.nextInt(10)+1;
         System.out.println("Pushing index:"+a+" value:"+b+" - "+printList());
         push(a,b);
         System.out.println("Result - "+printList());
@@ -221,8 +221,8 @@ public static void putNode(int index, int previousIndex, int num){
 
     public static void action3(){
         System.out.println("---------------");
-        int a = rnd.nextInt(1000)+1;
-        int b = rnd.nextInt(1000)+1;
+        int a = rnd.nextInt(10)+1;
+        int b = rnd.nextInt(10)+1;
         System.out.println("Inserting index:"+a+" value:"+b+" - "+printList());
         insertAtAsc(a,b);
         System.out.println("Result - "+printList());
@@ -230,7 +230,7 @@ public static void putNode(int index, int previousIndex, int num){
 
     public static void action4(){
         System.out.println("---------------");
-        int a = rnd.nextInt(1000)+1;
+        int a = rnd.nextInt(10)+1;
         System.out.println("Removing index:"+a+" - "+printList());
         remove(a);
         System.out.println("Result - "+printList());
@@ -238,10 +238,23 @@ public static void putNode(int index, int previousIndex, int num){
 
     public static void action5(){
         System.out.println("---------------");
-        int a = rnd.nextInt(1000)+1;
+        int a = randomChainIndex();
         System.out.println("Truncating index:"+a+" - "+printList());
         truncateAt(a);
         System.out.println("Result - "+printList());
+    }
+
+    public static int randomChainIndex(){
+        int atCurrent = currentIndex;
+        int prev = linkedList.get(atCurrent).previousIndex;
+        while(prev!=0){
+            atCurrent = prev;
+            prev = linkedList.get(atCurrent).previousIndex;
+            if(rnd.nextBoolean()){
+                return rnd.nextBoolean()?atCurrent:prev;
+            }
+        }
+        return rnd.nextInt(10)+1;
     }
 
 
