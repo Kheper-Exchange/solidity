@@ -73,6 +73,7 @@ public static void putNode(int index, int previousIndex, int num){
 
     public static void remove(int index){
         if(!linkedList.containsKey(index) || index==0 || currentIndex==0) return; //must exist!
+        if(!isIndexInChain(index)) return; //must exist in chain
         if(currentIndex==index) {pop(); return;}
         int pointerIndex = findPointerIndex(index);
         if(pointerIndex!=0 && linkedList.get(pointerIndex).previousIndex!=0) {
