@@ -20,34 +20,34 @@ public class LinkedListDebug {
         node.value = num;
         linkedList.put(index, node);
     }
-
-    public static int getCurrentIndex() {
-        return currentIndex;
-    }
-
-    public static void setCurrentIndex(int num) {
-        currentIndex = num;
-    }
-
-    public static int getValueAt(int index) {
-        return linkedList.get(index).value;
-    }
-
-    public static void setValueAt(int index, int num) {
-        Node change = linkedList.get(index);
-        change.value = num;
-        putNode(index, change.previousIndex, change.value);
-    }
-
-    public int getPreviousIndexAt(int index) {
-        return linkedList.get(index).previousIndex;
-    }
-
-    public static void setPreviousIndexAt(int index, int num) {
-        Node change = linkedList.get(index);
-        change.previousIndex = num;
-        putNode(index, change.previousIndex, change.value);
-    }
+//
+//    public static int getCurrentIndex() {
+//        return currentIndex;
+//    }
+//
+//    public static void setCurrentIndex(int num) {
+//        currentIndex = num;
+//    }
+//
+//    public static int getValueAt(int index) {
+//        return linkedList.get(index).value;
+//    }
+//
+//    public static void setValueAt(int index, int num) {
+//        Node change = linkedList.get(index);
+//        change.value = num;
+//        putNode(index, change.previousIndex, change.value);
+//    }
+//
+//    public int getPreviousIndexAt(int index) {
+//        return linkedList.get(index).previousIndex;
+//    }
+//
+//    public static void setPreviousIndexAt(int index, int num) {
+//        Node change = linkedList.get(index);
+//        change.previousIndex = num;
+//        putNode(index, change.previousIndex, change.value);
+//    }
 
     public static void push(int index, int num) {
         if ((asc && index <= currentIndex) || (!asc && index >= currentIndex && currentIndex != 0))
@@ -103,7 +103,7 @@ public class LinkedListDebug {
     }
 
     public static void remove(int index) {
-        if (!linkedList.containsKey(index) || index == 0 || currentIndex == 0 || !isIndexInChain(index))
+        if (index == 0 || currentIndex == 0 || !isIndexInChain(index))
             return;
         if (currentIndex == index) {
             pop();
@@ -136,7 +136,7 @@ public class LinkedListDebug {
     }
 
     public static void truncateAt(int index) {
-        if (linkedList.containsKey(index) && index != 0 && index != currentIndex && isIndexInChain(index))
+        if (index != 0 && index != currentIndex && isIndexInChain(index))
             currentIndex = index;
     }
 
