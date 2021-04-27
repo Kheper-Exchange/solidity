@@ -5,7 +5,7 @@ import java.util.Random;
 public class LinkedListDebug {
 
     //1 is reserved for no-result!
-    
+
     private static final Map<Integer, Node> linkedList = new HashMap<>();
     private static int currentIndex;
     private static boolean asc = true; //false for descending
@@ -80,10 +80,10 @@ public class LinkedListDebug {
         }
 
         int closestIndex = findClosestIndexDesc(index);
-        if(closestIndex==1) return;
+        if (closestIndex == 1) return;
         if (closestIndex == 0)
             closestIndex = findPointerIndex(closestIndex);
-        if(closestIndex==1) return;
+        if (closestIndex == 1) return;
         putNode(index, linkedList.get(closestIndex).previousIndex, num);
         linkedList.get(closestIndex).previousIndex = index;
     }
@@ -97,7 +97,7 @@ public class LinkedListDebug {
         }
 
         int closestIndex = findClosestIndexAsc(index);
-        if(closestIndex==1) return;
+        if (closestIndex == 1) return;
         putNode(index, linkedList.get(closestIndex).previousIndex, num);
         linkedList.get(closestIndex).previousIndex = index;
     }
@@ -110,7 +110,7 @@ public class LinkedListDebug {
             return;
         }
         int pointerIndex = findPointerIndex(index);
-        if(pointerIndex==1) return;
+        if (pointerIndex == 1) return;
 
         if (pointerIndex != 0 && linkedList.get(pointerIndex).previousIndex != 0)
             linkedList.get(pointerIndex).previousIndex = linkedList.get(index).previousIndex;
@@ -119,18 +119,18 @@ public class LinkedListDebug {
             return;
 
         pointerIndex = findPointerIndex(pointerIndex);
-        if(pointerIndex==1) return;
-        linkedList.get(pointerIndex).previousIndex = 0;
+        if (pointerIndex != 1)
+            linkedList.get(pointerIndex).previousIndex = 0;
     }
 
     private static int findPointerIndex(int index) {
-        int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex;
-        int count = 0;
+        int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex, count = 0;
         while (prev != index && prev != 0) {
-            if(count>=10000) return 1;
+            if (count >= 10000)
+                return 1;
             atCurrent = prev;
             prev = linkedList.get(atCurrent).previousIndex;
-            count++;
+            ++count;
         }
         return atCurrent;
     }
@@ -143,43 +143,43 @@ public class LinkedListDebug {
     public static boolean isIndexInChain(int index) {
         if (currentIndex == 0 && index != currentIndex) return false;
         if (currentIndex == index) return true;
-        int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex;
-        int count = 0;
+        int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex, count = 0;
         while (prev != 0) {
-            if(count>=10000) return false;
+            if (count >= 10000)
+                break;
             atCurrent = prev;
             prev = linkedList.get(atCurrent).previousIndex;
             if (prev == index || atCurrent == index)
                 return true;
-        count++;
+            count++;
         }
         return false;
     }
 
     //is internal!
     public static int findClosestIndexAsc(int searchIndex) {
-        int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex;
-        int count = 0;
+        int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex, count = 0;
         while (prev > searchIndex) {
-            if(count>=10000) return 1;
+            if (count >= 10000)
+                return 1;
             atCurrent = prev;
             prev = linkedList.get(atCurrent).previousIndex;
-            count++;
+            ++count;
         }
         return atCurrent;
     }
 
     //is internal!
     public static int findClosestIndexDesc(int searchIndex) {
-        int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex;
-        int count = 0;
+        int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex, count = 0;
         while (prev < searchIndex) {
-            if(count>=10000) return 1;
+            if (count >= 10000)
+                return 1;
             atCurrent = prev;
             if (atCurrent == 0)
                 return 0;
             prev = linkedList.get(atCurrent).previousIndex;
-            count++;
+            ++count;
         }
         return atCurrent;
     }
@@ -212,10 +212,8 @@ public class LinkedListDebug {
             if (asc) {
                 if (next != 0 && next > current)
                     return false;
-            } else {
-                if (next != 0 && next < current)
-                    return false;
-            }
+            } else if (next != 0 && next < current)
+                return false;
             next = Integer.parseInt(ssp[1]);
         }
         return true;
@@ -315,15 +313,13 @@ public class LinkedListDebug {
     }
 
     public static int randomChainIndex() {
-        if (currentIndex == 0) {
-            return rnd.nextInt(1000) + 2;
-        }
-        for (int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex; prev != 0; ) {
-            atCurrent = prev;
-            prev = linkedList.get(atCurrent).previousIndex;
-            if (rnd.nextBoolean())
-                return !rnd.nextBoolean() ? prev : atCurrent;
-        }
+        if (currentIndex != 0)
+            for (int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex; prev != 0; ) {
+                atCurrent = prev;
+                prev = linkedList.get(atCurrent).previousIndex;
+                if (rnd.nextBoolean())
+                    return !rnd.nextBoolean() ? prev : atCurrent;
+            }
         return rnd.nextInt(1000) + 2;
     }
 
