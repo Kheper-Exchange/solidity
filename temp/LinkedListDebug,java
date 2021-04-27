@@ -48,7 +48,7 @@ public class LinkedListDebug {
     }
 
     public static void push(int index, int num) {
-        if ((asc && index <= currentIndex) || (!asc && index >= currentIndex && currentIndex!=0))
+        if ((asc && index <= currentIndex) || (!asc && index >= currentIndex && currentIndex != 0))
             return;
         putNode(index, currentIndex, num);
         currentIndex = index;
@@ -59,34 +59,34 @@ public class LinkedListDebug {
             currentIndex = linkedList.get(currentIndex).previousIndex;
     }
 
-    public static void insert(int index, int num){
+    public static void insert(int index, int num) {
         if (!isIndexInChain(index) && currentIndex != index)
-			if (currentIndex == 0)
-				push(index, num);
-			else if (asc)
-				insertAtAsc(index, num);
-			else
-				insertAtDesc(index, num);
+            if (currentIndex == 0)
+                push(index, num);
+            else if (asc)
+                insertAtAsc(index, num);
+            else
+                insertAtDesc(index, num);
     }
 
-//is internal
-    public static void insertAtDesc(int index, int num){
-        if(asc) return;
+    //is internal
+    public static void insertAtDesc(int index, int num) {
+        if (asc) return;
         if (currentIndex > index) {
             push(index, num);
             return;
         }
 
         int closestIndex = findClosestIndexDesc(index);
-        if(closestIndex==0)
-			closestIndex = findPointerIndex(closestIndex);
-            putNode(index, linkedList.get(closestIndex).previousIndex, num);
-            linkedList.get(closestIndex).previousIndex = index;
+        if (closestIndex == 0)
+            closestIndex = findPointerIndex(closestIndex);
+        putNode(index, linkedList.get(closestIndex).previousIndex, num);
+        linkedList.get(closestIndex).previousIndex = index;
     }
 
-//is internal
+    //is internal
     public static void insertAtAsc(int index, int num) {
-        if(!asc) return;
+        if (!asc) return;
         if (currentIndex < index) {
             push(index, num);
             return;
@@ -157,9 +157,9 @@ public class LinkedListDebug {
     public static int findClosestIndexDesc(int searchIndex) {
         int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex;
         while (prev < searchIndex) {
-			atCurrent = prev;
-			if (atCurrent == 0)
-				return 0;
+            atCurrent = prev;
+            if (atCurrent == 0)
+                return 0;
             prev = linkedList.get(atCurrent).previousIndex;
         }
         return atCurrent;
@@ -190,12 +190,11 @@ public class LinkedListDebug {
             current = Integer.parseInt(ssp[0]);
             if (next != current)
                 return false;
-            if(asc){
-                if(next!=0 && next>current)
+            if (asc) {
+                if (next != 0 && next > current)
                     return false;
-            }
-            else{
-                if(next!=0 && next<current)
+            } else {
+                if (next != 0 && next < current)
                     return false;
             }
             next = Integer.parseInt(ssp[1]);
@@ -226,8 +225,6 @@ public class LinkedListDebug {
 //
 //        remove(12345);
 //        System.out.println(printList());
-
-
 
 
         while (true) {
