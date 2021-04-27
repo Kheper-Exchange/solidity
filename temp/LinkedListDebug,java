@@ -7,7 +7,7 @@ import java.util.Random;
 public class LinkedListDebug {
 
     private static Map<Integer, Node> linkedList = new HashMap<>();
-    private static int currentIndex = 0;
+    private static int currentIndex;
     private static boolean asc = true; //false for descending
 
 //----------------------------------------------------
@@ -50,15 +50,15 @@ public static void putNode(int index, int previousIndex, int num){
 
     //----------------------------------------------------
     public static void push(int index, int num){
-        if(!((asc&&index<=currentIndex) || (!asc&&index>=currentIndex))) {
-            putNode(index, currentIndex, num);
-            currentIndex = index;
-        }
+        if ((asc && index <= currentIndex) || (!asc && index >= currentIndex))
+			return;
+		putNode(index, currentIndex, num);
+		currentIndex = index;
     }
 
     public static void pop(){
-        if(currentIndex==0) return;
-        currentIndex = linkedList.get(currentIndex).previousIndex;
+        if (currentIndex != 0)
+			currentIndex = linkedList.get(currentIndex).previousIndex;
     }
 
     public static void insertAtAsc(int index, int num){
@@ -72,102 +72,80 @@ public static void putNode(int index, int previousIndex, int num){
 
 
     public static void remove(int index){
-        if(!linkedList.containsKey(index) || index==0 || currentIndex==0) return; //must exist!
-        if(!isIndexInChain(index)) return; //must exist in chain
-        if(currentIndex==index) {pop(); return;}
-        int pointerIndex = findPointerIndex(index);
-        if(pointerIndex!=0 && linkedList.get(pointerIndex).previousIndex!=0) {
-        int skipToIndex = linkedList.get(index).previousIndex;
-        linkedList.get(pointerIndex).previousIndex = skipToIndex;
-        }
-        if(linkedList.get(pointerIndex).previousIndex==0){
-            pointerIndex = findPointerIndex(pointerIndex);
-            linkedList.get(pointerIndex).previousIndex = 0;
-        }
-    }
+		if (!linkedList.containsKey(index) || index == 0 || currentIndex == 0 || !isIndexInChain(index))
+			return;
+		if (currentIndex == index) {
+			pop();
+			return;
+		}
+		int pointerIndex = findPointerIndex(index);
+		if (pointerIndex != 0 && linkedList.get(pointerIndex).previousIndex != 0)
+			linkedList.get(pointerIndex).previousIndex = linkedList.get(index).previousIndex;
+		if (linkedList.get(pointerIndex).previousIndex != 0)
+			return;
+		pointerIndex = findPointerIndex(pointerIndex);
+		linkedList.get(pointerIndex).previousIndex = 0;
+	}
 
     private static int findPointerIndex(int index) {
-        int atCurrent = currentIndex;
-        int prev = linkedList.get(atCurrent).previousIndex;
-        while(prev!=index && prev!=0){
-            atCurrent = prev;
-            prev = linkedList.get(atCurrent).previousIndex;
-        }
+        int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex;
+        for (; prev != index && prev != 0; prev = linkedList.get(atCurrent).previousIndex)
+			atCurrent = prev;
         return atCurrent;
     }
 
 
     public static void truncateAt(int index){
-        if(!linkedList.containsKey(index) || index==0 || index==currentIndex) return; //must exist!
-        if(!isIndexInChain(index)) return; //must exist in chain
-        currentIndex = index;
-    }
+		if (linkedList.containsKey(index) && index != 0 && index != currentIndex && isIndexInChain(index))
+			currentIndex = index;
+	}
 
     public static boolean isIndexInChain(int index){
-        int atCurrent = currentIndex;
-        int prev = linkedList.get(atCurrent).previousIndex;
-        while(prev!=0){
-            atCurrent = prev;
-            prev = linkedList.get(atCurrent).previousIndex;
-            if(prev==index || atCurrent==index){
-                return true;
-            }
-        }
+    if(currentIndex==0 && index!=currentIndex) return false;
+    if(currentIndex==0 && index==currentIndex) return true;
+        for (int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex; prev != 0;) {
+			atCurrent = prev;
+			prev = linkedList.get(atCurrent).previousIndex;
+			if (prev == index || atCurrent == index)
+				return true;
+		}
         return false;
     }
 
     public static int findClosestIndexAsc(int searchIndex){
-        int atCurrent = currentIndex;
-        int prev = linkedList.get(atCurrent).previousIndex;
-        while(prev>searchIndex){
-            atCurrent = prev;
-            prev = linkedList.get(atCurrent).previousIndex;
-        }
+        int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex;
+        for (; prev > searchIndex; prev = linkedList.get(atCurrent).previousIndex)
+			atCurrent = prev;
         return atCurrent;
     }
 
 
 
     public static String printList(){
-        String out = ""+currentIndex;
+        String out = currentIndex + "";
 
-        int iterator = currentIndex;
-        while(iterator>0) {
-            Node node = linkedList.get(iterator);
-            int previousIndex = node.previousIndex;
-            int value = node.value;
-//            System.out.println(iterator + ":" + previousIndex + ":" + value);
-            out = out+"-->"+"{"+iterator + ":" + previousIndex + ":" + value+"}";
-            iterator = previousIndex;
-        }
-        out = out+"-->end";
-
-//        System.out.println(out);
-        return out;
+        for (int iterator = currentIndex; iterator > 0;) {
+			Node node = linkedList.get(iterator);
+			int previousIndex = node.previousIndex;
+			out += "-->{" + iterator + ":" + previousIndex + ":" + node.value + "}";
+			iterator = previousIndex;
+		}
+        return out += "-->end";
     }
 
     public static boolean validate(String map){
     map = map.replaceAll("-","");
     String[] sp = map.split(">");
-    if(!sp[sp.length-1].equals("end")) {
-        return false;
-    }
+    if(!"end".equals(sp[sp.length - 1]))
+		return false;
 
-    int current = Integer.parseInt(sp[0]);
-    int next = current;
-
-    for(int t=1;t<sp.length-1;t++){
-        String val = sp[t];
-        val = val.replaceAll("\\{","");
-        val = val.replaceAll("}","");
-        String[] ssp = val.split(":");
-
-        current = Integer.parseInt(ssp[0]);
-        if(next!=current){
-            return false;
-        }
-        next = Integer.parseInt(ssp[1]);
-    }
+    for (int current = Integer.parseInt(sp[0]), next = current, t = 1; t < sp.length - 1; ++t) {
+		String[] ssp = sp[t].replaceAll("\\{", "").replaceAll("}", "").split(":");
+		current = Integer.parseInt(ssp[0]);
+		if (next != current)
+			return false;
+		next = Integer.parseInt(ssp[1]);
+	}
     return true;
     }
 
@@ -177,17 +155,21 @@ public static void putNode(int index, int previousIndex, int num){
     public static void main(String[] args){
         //setup
         Node first = new Node();
-        first.previousIndex = (0);
-        first.value = (0);
+        first.value = 0;
         linkedList.put(0,first);
         //------------------------------
         while(true){
             int rint = rnd.nextInt(5)+1;
-            if(rint==1){action1();}
-            if(rint==2){action2();}
-            if(rint==3){action3();}
-            if(rint==4){action4();}
-            if(rint==5){action5();}
+            if(rint==1)
+				action1();
+            if(rint==2)
+				action2();
+            if(rint==3)
+				action3();
+            if(rint==4)
+				action4();
+            if(rint==5)
+				action5();
 
             String map = printList();
             boolean validate = validate(map);
@@ -206,8 +188,7 @@ public static void putNode(int index, int previousIndex, int num){
     private static Random rnd = new Random();
     public static void action1(){
         System.out.println("---------------");
-        int a = rnd.nextInt(10)+1;
-        int b = rnd.nextInt(10)+1;
+        int a = rnd.nextInt(1000) + 1, b = rnd.nextInt(1000) + 1;
         System.out.println("Pushing index:"+a+" value:"+b+" - "+printList());
         push(a,b);
         System.out.println("Result - "+printList());
@@ -222,8 +203,7 @@ public static void putNode(int index, int previousIndex, int num){
 
     public static void action3(){
         System.out.println("---------------");
-        int a = rnd.nextInt(10)+1;
-        int b = rnd.nextInt(10)+1;
+        int a = rnd.nextInt(1000) + 1, b = rnd.nextInt(1000) + 1;
         System.out.println("Inserting index:"+a+" value:"+b+" - "+printList());
         insertAtAsc(a,b);
         System.out.println("Result - "+printList());
@@ -231,7 +211,7 @@ public static void putNode(int index, int previousIndex, int num){
 
     public static void action4(){
         System.out.println("---------------");
-        int a = rnd.nextInt(10)+1;
+        int a = randomChainIndex();
         System.out.println("Removing index:"+a+" - "+printList());
         remove(a);
         System.out.println("Result - "+printList());
@@ -246,21 +226,19 @@ public static void putNode(int index, int previousIndex, int num){
     }
 
     public static int randomChainIndex(){
-        int atCurrent = currentIndex;
-        int prev = linkedList.get(atCurrent).previousIndex;
-        while(prev!=0){
-            atCurrent = prev;
-            prev = linkedList.get(atCurrent).previousIndex;
-            if(rnd.nextBoolean()){
-                return rnd.nextBoolean()?atCurrent:prev;
-            }
-        }
-        return rnd.nextInt(10)+1;
+        if(currentIndex==0) {return rnd.nextInt(1000)+1;}
+        for (int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex; prev != 0;) {
+			atCurrent = prev;
+			prev = linkedList.get(atCurrent).previousIndex;
+			if (rnd.nextBoolean())
+				return !rnd.nextBoolean() ? prev : atCurrent;
+		}
+        return rnd.nextInt(1000)+1;
     }
 
 
 }
 class Node {
-    public Integer previousIndex = null;
-    public Integer value = null;
+    public Integer previousIndex;
+    public Integer value;
 }
