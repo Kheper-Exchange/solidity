@@ -2,7 +2,8 @@
 
 pragma solidity >= 0.7 .0 < 0.9 .0;
 
-//reserved index values 0,1
+//reserved index values 0,1 
+//TODO: add the value 2
 
 contract LinkedList {
 
