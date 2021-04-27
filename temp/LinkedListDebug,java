@@ -127,7 +127,7 @@ public class LinkedListDebug {
         int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex;
         int count = 0;
         while (prev != index && prev != 0) {
-            if(count>=1000) return 1;
+            if(count>=10000) return 1;
             atCurrent = prev;
             prev = linkedList.get(atCurrent).previousIndex;
             count++;
@@ -146,7 +146,7 @@ public class LinkedListDebug {
         int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex;
         int count = 0;
         while (prev != 0) {
-            if(count>=1000) return false;
+            if(count>=10000) return false;
             atCurrent = prev;
             prev = linkedList.get(atCurrent).previousIndex;
             if (prev == index || atCurrent == index)
@@ -161,7 +161,7 @@ public class LinkedListDebug {
         int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex;
         int count = 0;
         while (prev > searchIndex) {
-            if(count>=1000) return 1;
+            if(count>=10000) return 1;
             atCurrent = prev;
             prev = linkedList.get(atCurrent).previousIndex;
             count++;
@@ -174,7 +174,7 @@ public class LinkedListDebug {
         int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex;
         int count = 0;
         while (prev < searchIndex) {
-            if(count>=1000) return 1;
+            if(count>=10000) return 1;
             atCurrent = prev;
             if (atCurrent == 0)
                 return 0;
