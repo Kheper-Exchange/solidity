@@ -8,12 +8,10 @@ public class LinkedListDebug {
     private static int currentIndex;
     private static boolean asc = true; //false for descending
 
-    //ok
     public static void setAsc(boolean isAscending) {
         asc = isAscending;
     }
 
-    //ok
     public static void putNode(int index, int previousIndex, int num) {
         Node node = new Node();
         node.previousIndex = previousIndex;
@@ -21,41 +19,34 @@ public class LinkedListDebug {
         linkedList.put(index, node);
     }
 
-    //ok
     public static int getCurrentIndex() {
         return currentIndex;
     }
 
-    //ok
     public static void setCurrentIndex(int num) {
         currentIndex = num;
     }
 
-    //ok
     public static int getValueAt(int index) {
         return linkedList.get(index).value;
     }
 
-    //ok
     public static void setValueAt(int index, int num) {
         Node change = linkedList.get(index);
         change.value = num;
         putNode(index, change.previousIndex, change.value);
     }
 
-    //ok
     public int getPreviousIndexAt(int index) {
         return linkedList.get(index).previousIndex;
     }
 
-    //ok
     public static void setPreviousIndexAt(int index, int num) {
         Node change = linkedList.get(index);
         change.previousIndex = num;
         putNode(index, change.previousIndex, change.value);
     }
 
-    //ok
     public static void push(int index, int num) {
         if ((asc && index <= currentIndex) || (!asc && index >= currentIndex && currentIndex!=0))
             return;
@@ -63,23 +54,19 @@ public class LinkedListDebug {
         currentIndex = index;
     }
 
-    //ok
     public static void pop() {
         if (currentIndex != 0)
             currentIndex = linkedList.get(currentIndex).previousIndex;
     }
 
     public static void insert(int index, int num){
-        if (isIndexInChain(index) || currentIndex == index) return; //must remove it first!
-        if(currentIndex==0){
-            push(index,num);
-            return;
-        }
-        if (asc) {
-            insertAtAsc(index, num);
-        } else {
-            insertAtDesc(index, num);
-        }
+        if (!isIndexInChain(index) && currentIndex != index)
+			if (currentIndex == 0)
+				push(index, num);
+			else if (asc)
+				insertAtAsc(index, num);
+			else
+				insertAtDesc(index, num);
     }
 
 //is internal
@@ -91,9 +78,8 @@ public class LinkedListDebug {
         }
 
         int closestIndex = findClosestIndexDesc(index);
-        if(closestIndex==0){
-            closestIndex = findPointerIndex(closestIndex);
-        }
+        if(closestIndex==0)
+			closestIndex = findPointerIndex(closestIndex);
             putNode(index, linkedList.get(closestIndex).previousIndex, num);
             linkedList.get(closestIndex).previousIndex = index;
     }
@@ -111,7 +97,6 @@ public class LinkedListDebug {
         linkedList.get(closestIndex).previousIndex = index;
     }
 
-//ok
     public static void remove(int index) {
         if (!linkedList.containsKey(index) || index == 0 || currentIndex == 0 || !isIndexInChain(index))
             return;
@@ -140,17 +125,16 @@ public class LinkedListDebug {
         return atCurrent;
     }
 
-//ok
     public static void truncateAt(int index) {
         if (linkedList.containsKey(index) && index != 0 && index != currentIndex && isIndexInChain(index))
             currentIndex = index;
     }
 
-//ok
     public static boolean isIndexInChain(int index) {
         if (currentIndex == 0 && index != currentIndex) return false;
         if (currentIndex == index) return true;
-        for (int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex; prev != 0; ) {
+        int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex;
+        while (prev != 0) {
             atCurrent = prev;
             prev = linkedList.get(atCurrent).previousIndex;
             if (prev == index || atCurrent == index)
@@ -173,8 +157,9 @@ public class LinkedListDebug {
     public static int findClosestIndexDesc(int searchIndex) {
         int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex;
         while (prev < searchIndex) {
-            atCurrent = prev;
-            if(atCurrent==0){return 0;}
+			atCurrent = prev;
+			if (atCurrent == 0)
+				return 0;
             prev = linkedList.get(atCurrent).previousIndex;
         }
         return atCurrent;
@@ -205,6 +190,14 @@ public class LinkedListDebug {
             current = Integer.parseInt(ssp[0]);
             if (next != current)
                 return false;
+            if(asc){
+                if(next!=0 && next>current)
+                    return false;
+            }
+            else{
+                if(next!=0 && next<current)
+                    return false;
+            }
             next = Integer.parseInt(ssp[1]);
         }
         return true;
