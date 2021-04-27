@@ -1,179 +1,258 @@
-import com.google.gson.Gson;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 public class LinkedListDebug {
 
-    private static Map<Integer, Node> linkedList = new HashMap<>();
+    private static final Map<Integer, Node> linkedList = new HashMap<>();
     private static int currentIndex;
     private static boolean asc = true; //false for descending
 
-//----------------------------------------------------
-public static void putNode(int index, int previousIndex, int num){
-    Node node = new Node();
-    node.previousIndex = previousIndex;
-    node.value = num;
-    linkedList.put(index, node);
-}
-//----------------------------------------------------
-    public static int getCurrentIndex(){
+    //ok
+    public static void setAsc(boolean isAscending) {
+        asc = isAscending;
+    }
+
+    //ok
+    public static void putNode(int index, int previousIndex, int num) {
+        Node node = new Node();
+        node.previousIndex = previousIndex;
+        node.value = num;
+        linkedList.put(index, node);
+    }
+
+    //ok
+    public static int getCurrentIndex() {
         return currentIndex;
     }
 
-    public static void setCurrentIndex(int num){
+    //ok
+    public static void setCurrentIndex(int num) {
         currentIndex = num;
     }
 
-//----------------------------------------------------
-
-    public static int getValueAt(int index){
+    //ok
+    public static int getValueAt(int index) {
         return linkedList.get(index).value;
     }
 
-    public static void setValueAt(int index, int num){
+    //ok
+    public static void setValueAt(int index, int num) {
         Node change = linkedList.get(index);
         change.value = num;
         putNode(index, change.previousIndex, change.value);
     }
 
-    public int getPreviousIndexAt(int index){
+    //ok
+    public int getPreviousIndexAt(int index) {
         return linkedList.get(index).previousIndex;
     }
 
-    public static void setPreviousIndexAt(int index, int num){
+    //ok
+    public static void setPreviousIndexAt(int index, int num) {
         Node change = linkedList.get(index);
         change.previousIndex = num;
         putNode(index, change.previousIndex, change.value);
     }
 
-    //----------------------------------------------------
-    public static void push(int index, int num){
-        if ((asc && index <= currentIndex) || (!asc && index >= currentIndex))
-			return;
-		putNode(index, currentIndex, num);
-		currentIndex = index;
+    //ok
+    public static void push(int index, int num) {
+        if ((asc && index <= currentIndex) || (!asc && index >= currentIndex && currentIndex!=0))
+            return;
+        putNode(index, currentIndex, num);
+        currentIndex = index;
     }
 
-    public static void pop(){
+    //ok
+    public static void pop() {
         if (currentIndex != 0)
-			currentIndex = linkedList.get(currentIndex).previousIndex;
+            currentIndex = linkedList.get(currentIndex).previousIndex;
     }
 
-    public static void insertAtAsc(int index, int num){
-        if(isIndexInChain(index) || currentIndex==index) return; //must remove it first!
-        if(currentIndex<index){push(index,num); return;}
+    public static void insert(int index, int num){
+        if (isIndexInChain(index) || currentIndex == index) return; //must remove it first!
+        if(currentIndex==0){
+            push(index,num);
+            return;
+        }
+        if (asc) {
+            insertAtAsc(index, num);
+        } else {
+            insertAtDesc(index, num);
+        }
+    }
+
+//is internal
+    public static void insertAtDesc(int index, int num){
+        if(asc) return;
+        if (currentIndex > index) {
+            push(index, num);
+            return;
+        }
+
+        int closestIndex = findClosestIndexDesc(index);
+        if(closestIndex==0){
+            closestIndex = findPointerIndex(closestIndex);
+        }
+            putNode(index, linkedList.get(closestIndex).previousIndex, num);
+            linkedList.get(closestIndex).previousIndex = index;
+    }
+
+//is internal
+    public static void insertAtAsc(int index, int num) {
+        if(!asc) return;
+        if (currentIndex < index) {
+            push(index, num);
+            return;
+        }
 
         int closestIndex = findClosestIndexAsc(index);
         putNode(index, linkedList.get(closestIndex).previousIndex, num);
         linkedList.get(closestIndex).previousIndex = index;
     }
 
+//ok
+    public static void remove(int index) {
+        if (!linkedList.containsKey(index) || index == 0 || currentIndex == 0 || !isIndexInChain(index))
+            return;
+        if (currentIndex == index) {
+            pop();
+            return;
+        }
+        int pointerIndex = findPointerIndex(index);
 
-    public static void remove(int index){
-		if (!linkedList.containsKey(index) || index == 0 || currentIndex == 0 || !isIndexInChain(index))
-			return;
-		if (currentIndex == index) {
-			pop();
-			return;
-		}
-		int pointerIndex = findPointerIndex(index);
-		if (pointerIndex != 0 && linkedList.get(pointerIndex).previousIndex != 0)
-			linkedList.get(pointerIndex).previousIndex = linkedList.get(index).previousIndex;
-		if (linkedList.get(pointerIndex).previousIndex != 0)
-			return;
-		pointerIndex = findPointerIndex(pointerIndex);
-		linkedList.get(pointerIndex).previousIndex = 0;
-	}
+        if (pointerIndex != 0 && linkedList.get(pointerIndex).previousIndex != 0)
+            linkedList.get(pointerIndex).previousIndex = linkedList.get(index).previousIndex;
+
+        if (linkedList.get(pointerIndex).previousIndex == 0)
+            return;
+
+        pointerIndex = findPointerIndex(pointerIndex);
+        linkedList.get(pointerIndex).previousIndex = 0;
+    }
 
     private static int findPointerIndex(int index) {
         int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex;
-        for (; prev != index && prev != 0; prev = linkedList.get(atCurrent).previousIndex)
-			atCurrent = prev;
+        while (prev != index && prev != 0) {
+            atCurrent = prev;
+            prev = linkedList.get(atCurrent).previousIndex;
+        }
         return atCurrent;
     }
 
+//ok
+    public static void truncateAt(int index) {
+        if (linkedList.containsKey(index) && index != 0 && index != currentIndex && isIndexInChain(index))
+            currentIndex = index;
+    }
 
-    public static void truncateAt(int index){
-		if (linkedList.containsKey(index) && index != 0 && index != currentIndex && isIndexInChain(index))
-			currentIndex = index;
-	}
-
-    public static boolean isIndexInChain(int index){
-    if(currentIndex==0 && index!=currentIndex) return false;
-    if(currentIndex==0 && index==currentIndex) return true;
-        for (int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex; prev != 0;) {
-			atCurrent = prev;
-			prev = linkedList.get(atCurrent).previousIndex;
-			if (prev == index || atCurrent == index)
-				return true;
-		}
+//ok
+    public static boolean isIndexInChain(int index) {
+        if (currentIndex == 0 && index != currentIndex) return false;
+        if (currentIndex == index) return true;
+        for (int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex; prev != 0; ) {
+            atCurrent = prev;
+            prev = linkedList.get(atCurrent).previousIndex;
+            if (prev == index || atCurrent == index)
+                return true;
+        }
         return false;
     }
 
-    public static int findClosestIndexAsc(int searchIndex){
+    //is internal!
+    public static int findClosestIndexAsc(int searchIndex) {
         int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex;
-        for (; prev > searchIndex; prev = linkedList.get(atCurrent).previousIndex)
-			atCurrent = prev;
+        while (prev > searchIndex) {
+            atCurrent = prev;
+            prev = linkedList.get(atCurrent).previousIndex;
+        }
+        return atCurrent;
+    }
+
+    //is internal!
+    public static int findClosestIndexDesc(int searchIndex) {
+        int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex;
+        while (prev < searchIndex) {
+            atCurrent = prev;
+            if(atCurrent==0){return 0;}
+            prev = linkedList.get(atCurrent).previousIndex;
+        }
         return atCurrent;
     }
 
 
-
-    public static String printList(){
+    //#############################################################################################################################################
+    public static String printList() {
         String out = currentIndex + "";
 
-        for (int iterator = currentIndex; iterator > 0;) {
-			Node node = linkedList.get(iterator);
-			int previousIndex = node.previousIndex;
-			out += "-->{" + iterator + ":" + previousIndex + ":" + node.value + "}";
-			iterator = previousIndex;
-		}
+        for (int iterator = currentIndex; iterator > 0; ) {
+            Node node = linkedList.get(iterator);
+            int previousIndex = node.previousIndex;
+            out += "-->{" + iterator + ":" + previousIndex + ":" + node.value + "}";
+            iterator = previousIndex;
+        }
         return out += "-->end";
     }
 
-    public static boolean validate(String map){
-    map = map.replaceAll("-","");
-    String[] sp = map.split(">");
-    if(!"end".equals(sp[sp.length - 1]))
-		return false;
+    public static boolean validate(String map) {
+        map = map.replaceAll("-", "");
+        String[] sp = map.split(">");
+        if (!"end".equals(sp[sp.length - 1]))
+            return false;
 
-    for (int current = Integer.parseInt(sp[0]), next = current, t = 1; t < sp.length - 1; ++t) {
-		String[] ssp = sp[t].replaceAll("\\{", "").replaceAll("}", "").split(":");
-		current = Integer.parseInt(ssp[0]);
-		if (next != current)
-			return false;
-		next = Integer.parseInt(ssp[1]);
-	}
-    return true;
+        for (int current = Integer.parseInt(sp[0]), next = current, t = 1; t < sp.length - 1; ++t) {
+            String[] ssp = sp[t].replaceAll("\\{", "").replaceAll("}", "").split(":");
+            current = Integer.parseInt(ssp[0]);
+            if (next != current)
+                return false;
+            next = Integer.parseInt(ssp[1]);
+        }
+        return true;
     }
 
 
-
-
-    public static void main(String[] args){
+    public static void main(String[] args) {
         //setup
+        setAsc(false);
         Node first = new Node();
         first.value = 0;
-        linkedList.put(0,first);
+        linkedList.put(0, first);
         //------------------------------
-        while(true){
-            int rint = rnd.nextInt(5)+1;
-            if(rint==1)
-				action1();
-            if(rint==2)
-				action2();
-            if(rint==3)
-				action3();
-            if(rint==4)
-				action4();
-            if(rint==5)
-				action5();
+//        System.out.println(printList());
+//        push(12345,1);
+//        System.out.println(printList());
+//
+//        insertAtDesc(200,200);
+//        System.out.println(printList());
+//
+//        insertAtDesc(210,200);
+//        System.out.println(printList());
+//
+//        remove(210);
+//        System.out.println(printList());
+//
+//        remove(12345);
+//        System.out.println(printList());
+
+
+
+
+        while (true) {
+            int rint = rnd.nextInt(5) + 1;
+            if (rint == 1)
+                action1();
+            if (rint == 2)
+                action2();
+            if (rint == 3)
+                action3();
+            if (rint == 4)
+                action4();
+            if (rint == 5)
+                action5();
 
             String map = printList();
             boolean validate = validate(map);
-            if(!validate){
+            if (!validate) {
                 System.out.println(rint);
                 System.out.println(map);
                 break;
@@ -185,59 +264,63 @@ public static void putNode(int index, int previousIndex, int num){
 
     }
 
-    private static Random rnd = new Random();
-    public static void action1(){
+    private static final Random rnd = new Random();
+
+    public static void action1() {
         System.out.println("---------------");
         int a = rnd.nextInt(1000) + 1, b = rnd.nextInt(1000) + 1;
-        System.out.println("Pushing index:"+a+" value:"+b+" - "+printList());
-        push(a,b);
-        System.out.println("Result - "+printList());
+        System.out.println("Pushing index:" + a + " value:" + b + " - " + printList());
+        push(a, b);
+        System.out.println("Result - " + printList());
     }
 
-    public static void action2(){
+    public static void action2() {
         System.out.println("---------------");
-        System.out.println("Popping - "+printList());
+        System.out.println("Popping - " + printList());
         pop();
-        System.out.println("Result - "+printList());
+        System.out.println("Result - " + printList());
     }
 
-    public static void action3(){
+    public static void action3() {
         System.out.println("---------------");
         int a = rnd.nextInt(1000) + 1, b = rnd.nextInt(1000) + 1;
-        System.out.println("Inserting index:"+a+" value:"+b+" - "+printList());
-        insertAtAsc(a,b);
-        System.out.println("Result - "+printList());
+        System.out.println("Inserting index:" + a + " value:" + b + " - " + printList());
+        insert(a, b);
+        System.out.println("Result - " + printList());
     }
 
-    public static void action4(){
+    public static void action4() {
         System.out.println("---------------");
         int a = randomChainIndex();
-        System.out.println("Removing index:"+a+" - "+printList());
+        System.out.println("Removing index:" + a + " - " + printList());
         remove(a);
-        System.out.println("Result - "+printList());
+        System.out.println("Result - " + printList());
     }
 
-    public static void action5(){
+    public static void action5() {
         System.out.println("---------------");
         int a = randomChainIndex();
-        System.out.println("Truncating index:"+a+" - "+printList());
+        System.out.println("Truncating index:" + a + " - " + printList());
         truncateAt(a);
-        System.out.println("Result - "+printList());
+        System.out.println("Result - " + printList());
     }
 
-    public static int randomChainIndex(){
-        if(currentIndex==0) {return rnd.nextInt(1000)+1;}
-        for (int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex; prev != 0;) {
-			atCurrent = prev;
-			prev = linkedList.get(atCurrent).previousIndex;
-			if (rnd.nextBoolean())
-				return !rnd.nextBoolean() ? prev : atCurrent;
-		}
-        return rnd.nextInt(1000)+1;
+    public static int randomChainIndex() {
+        if (currentIndex == 0) {
+            return rnd.nextInt(1000) + 1;
+        }
+        for (int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex; prev != 0; ) {
+            atCurrent = prev;
+            prev = linkedList.get(atCurrent).previousIndex;
+            if (rnd.nextBoolean())
+                return !rnd.nextBoolean() ? prev : atCurrent;
+        }
+        return rnd.nextInt(1000) + 1;
     }
 
 
 }
+
 class Node {
     public Integer previousIndex;
     public Integer value;
