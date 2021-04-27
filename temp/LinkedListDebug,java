@@ -220,13 +220,13 @@ public class LinkedListDebug {
     }
 
 
-    public static void main(String[] args) {
-        //setup
-        setAsc(false);
-        Node first = new Node();
-        first.value = 0;
-        linkedList.put(0, first);
-        //------------------------------
+//    public static void main(String[] args) {
+//        //setup
+//        setAsc(false);
+//        Node first = new Node();
+//        first.value = 0;
+//        linkedList.put(0, first);
+//        //------------------------------
 //        System.out.println(printList());
 //        push(12345,1);
 //        System.out.println(printList());
@@ -242,86 +242,86 @@ public class LinkedListDebug {
 //
 //        remove(12345);
 //        System.out.println(printList());
-
-
-        while (true) {
-            int rint = rnd.nextInt(5) + 1;
-            if (rint == 1)
-                action1();
-            if (rint == 2)
-                action2();
-            if (rint == 3)
-                action3();
-            if (rint == 4)
-                action4();
-            if (rint == 5)
-                action5();
-
-            String map = printList();
-            boolean validate = validate(map);
-            if (!validate) {
-                System.out.println(rint);
-                System.out.println(map);
-                break;
-            }
-
-
-        }
-
-
-    }
-
-    private static final Random rnd = new Random();
-
-    public static void action1() {
-        System.out.println("---------------");
-        int a = rnd.nextInt(1000) + 2, b = rnd.nextInt(1000) + 2;
-        System.out.println("Pushing index:" + a + " value:" + b + " - " + printList());
-        push(a, b);
-        System.out.println("Result - " + printList());
-    }
-
-    public static void action2() {
-        System.out.println("---------------");
-        System.out.println("Popping - " + printList());
-        pop();
-        System.out.println("Result - " + printList());
-    }
-
-    public static void action3() {
-        System.out.println("---------------");
-        int a = rnd.nextInt(1000) + 2, b = rnd.nextInt(1000) + 2;
-        System.out.println("Inserting index:" + a + " value:" + b + " - " + printList());
-        insert(a, b);
-        System.out.println("Result - " + printList());
-    }
-
-    public static void action4() {
-        System.out.println("---------------");
-        int a = randomChainIndex();
-        System.out.println("Removing index:" + a + " - " + printList());
-        remove(a);
-        System.out.println("Result - " + printList());
-    }
-
-    public static void action5() {
-        System.out.println("---------------");
-        int a = randomChainIndex();
-        System.out.println("Truncating index:" + a + " - " + printList());
-        truncateAt(a);
-        System.out.println("Result - " + printList());
-    }
-
-    public static int randomChainIndex() {
-        if (currentIndex != 0)
-            for (int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex; prev != 0; ) {
-                atCurrent = prev;
-                prev = linkedList.get(atCurrent).previousIndex;
-                if (rnd.nextBoolean())
-                    return !rnd.nextBoolean() ? prev : atCurrent;
-            }
-        return rnd.nextInt(1000) + 2;
-    }
+//
+//
+//        while (true) {
+//            int rint = rnd.nextInt(5) + 1;
+//            if (rint == 1)
+//                action1();
+//            if (rint == 2)
+//                action2();
+//            if (rint == 3)
+//                action3();
+//            if (rint == 4)
+//                action4();
+//            if (rint == 5)
+//                action5();
+//
+//            String map = printList();
+//            boolean validate = validate(map);
+//            if (!validate) {
+//                System.out.println(rint);
+//                System.out.println(map);
+//                break;
+//            }
+//
+//
+//        }
+//
+//
+//    }
+//
+//    private static final Random rnd = new Random();
+//
+//    public static void action1() {
+//        System.out.println("---------------");
+//        int a = rnd.nextInt(1000) + 2, b = rnd.nextInt(1000) + 2;
+//        System.out.println("Pushing index:" + a + " value:" + b + " - " + printList());
+//        push(a, b);
+//        System.out.println("Result - " + printList());
+//    }
+//
+//    public static void action2() {
+//        System.out.println("---------------");
+//        System.out.println("Popping - " + printList());
+//        pop();
+//        System.out.println("Result - " + printList());
+//    }
+//
+//    public static void action3() {
+//        System.out.println("---------------");
+//        int a = rnd.nextInt(1000) + 2, b = rnd.nextInt(1000) + 2;
+//        System.out.println("Inserting index:" + a + " value:" + b + " - " + printList());
+//        insert(a, b);
+//        System.out.println("Result - " + printList());
+//    }
+//
+//    public static void action4() {
+//        System.out.println("---------------");
+//        int a = randomChainIndex();
+//        System.out.println("Removing index:" + a + " - " + printList());
+//        remove(a);
+//        System.out.println("Result - " + printList());
+//    }
+//
+//    public static void action5() {
+//        System.out.println("---------------");
+//        int a = randomChainIndex();
+//        System.out.println("Truncating index:" + a + " - " + printList());
+//        truncateAt(a);
+//        System.out.println("Result - " + printList());
+//    }
+//
+//    public static int randomChainIndex() {
+//        if (currentIndex != 0)
+//            for (int atCurrent = currentIndex, prev = linkedList.get(atCurrent).previousIndex; prev != 0; ) {
+//                atCurrent = prev;
+//                prev = linkedList.get(atCurrent).previousIndex;
+//                if (rnd.nextBoolean())
+//                    return !rnd.nextBoolean() ? prev : atCurrent;
+//            }
+//        return rnd.nextInt(1000) + 2;
+//    }
 
 
 }
