@@ -21,12 +21,14 @@ contract LinkedList {
   }
 
   function putNode(uint index, uint previousIndex, uint num) public returns(bool) {
+    require(index != 1 && previousIndex != 1);
     linkedList[index].previousIndex = previousIndex;
     linkedList[index].value = num;
     return true;
   }
 
   function push(uint index, uint num) public returns(bool) {
+    require(index != 1);
     require(!((asc && index <= currentIndex) || (!asc && index >= currentIndex && currentIndex != 0)));
     putNode(index, currentIndex, num);
     currentIndex = index;
@@ -35,11 +37,13 @@ contract LinkedList {
 
   function pop() public returns(bool) {
     require(currentIndex != 0);
+    require(linkedList[currentIndex].previousIndex != 1);
     currentIndex = linkedList[currentIndex].previousIndex;
     return true;
   }
 
   function insert(uint index, uint num) public returns(bool) {
+    require(index != 1);
     require(!isIndexInChain(index) && currentIndex != index);
 
     if (currentIndex == 0)
@@ -55,7 +59,8 @@ contract LinkedList {
   }
 
   function insertAtDesc(uint index, uint num) private returns(bool) {
-    require(!asc);
+    require(!asc && index != 1);
+
     if (currentIndex > index) {
       push(index, num);
       return true;
@@ -72,7 +77,7 @@ contract LinkedList {
   }
 
   function insertAtAsc(uint index, uint num) public returns(bool) {
-    require(asc);
+    require(asc && index != 1);
 
     if (currentIndex < index) {
       push(index, num);
@@ -88,8 +93,7 @@ contract LinkedList {
   }
 
   function remove(uint index) public returns(bool) {
-
-    require(!(index == 0 || currentIndex == 0 || !isIndexInChain(index)));
+    require(index != 1 && index != 0 && currentIndex != 0 && isIndexInChain(index));
 
     if (currentIndex == index) {
       pop();
@@ -111,6 +115,7 @@ contract LinkedList {
   }
 
   function findPointerIndex(uint index) public view returns(uint) {
+    require(index != 1);
     uint atCurrent = currentIndex;
     uint prev = linkedList[atCurrent].previousIndex;
     uint count = 0;
@@ -125,12 +130,13 @@ contract LinkedList {
   }
 
   function truncateAt(uint index) public returns(bool) {
-    require(index != 0 && index != currentIndex && isIndexInChain(index));
+    require(index != 1 && index != 0 && index != currentIndex && isIndexInChain(index));
     currentIndex = index;
     return true;
   }
 
   function isIndexInChain(uint index) public view returns(bool) {
+    require(index != 1);
     if (currentIndex == 0 && index != currentIndex) return false;
     if (currentIndex == index) return true;
     uint atCurrent = currentIndex;
@@ -149,6 +155,7 @@ contract LinkedList {
   }
 
   function findClosestIndexAsc(uint searchIndex) private view returns(uint) {
+    require(searchIndex != 1);
     uint atCurrent = currentIndex;
     uint prev = linkedList[atCurrent].previousIndex;
     uint count = 0;
@@ -163,6 +170,7 @@ contract LinkedList {
   }
 
   function findClosestIndexDesc(uint searchIndex) private view returns(uint) {
+    require(searchIndex != 1);
     uint atCurrent = currentIndex;
     uint prev = linkedList[atCurrent].previousIndex;
     uint count = 0;
