@@ -21,6 +21,7 @@ contract LinkedList {
   }
 
   function putNode(uint index, uint previousIndex, uint num) public returns(bool) {
+  //TODO: save gas here, if things exist as they are...
     require(index != 1 && previousIndex != 1);
     linkedList[index].previousIndex = previousIndex;
     linkedList[index].value = num;
