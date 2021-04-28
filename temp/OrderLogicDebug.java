@@ -8,35 +8,52 @@ public class OrderLogicDebug {
         sellOrders.setAsc(false);
     }
 
-    public int getPriceGap(){
-        int sellIndex = sellOrders.getCurrentIndex(), buyIndex = buyOrders.getCurrentIndex();
-        return sellIndex < buyIndex ? buyIndex - sellIndex : sellIndex - buyIndex;
-    }
-
     public void placeSellOrder(int price, int amount){
         int isInSell = sellOrders.isIndexInChain(price), isInBuy = buyOrders.isIndexInChain(price);
         if (isInBuy != 2 && isInSell != 2)
 			if (sellOrders.getCurrentIndex() == 0 && isInBuy != 1)
-				sellOrders.insert(price, amount);
-			else if (isInSell == 1 && isInBuy != 1)
-				sellOrders.addValue(price, amount);
-			else if (isInSell != 1 && isInBuy == 1)
-				System.out.println("process inBuy, get difference, truncate or subtract, place inSell");
-			else if (isInSell != 1 && isInBuy != 1)
-				sellOrders.insert(price, amount);
+				sellOrders.push(price, amount);
+			else {
+				if (sellOrders.getCurrentIndex() == 0 && isInBuy == 1 || isInSell == 1 && isInBuy == 1)
+					return;
+				if (isInSell == 1 && isInBuy != 1)
+					sellOrders.addValueToNode(price, amount);
+				else {
+					if (isInSell != 1 && isInBuy == 1)
+						return;
+					if (isInSell != 1 && isInBuy != 1)
+						sellOrders.insert(price, amount);
+				}
+			}
+    }
+
+    public void purchaseSellOrder(int price, int amount){
+        if (sellOrders.isIndexInChain(price) == 1 && buyOrders.isIndexInChain(price) != 1)
+			sellOrders.subtractFromNode(price, amount);
     }
 
     public void placeBuyOrder(int price, int amount){
         int isInSell = sellOrders.isIndexInChain(price), isInBuy = buyOrders.isIndexInChain(price);
         if (isInBuy != 2 && isInSell != 2)
 			if (buyOrders.getCurrentIndex() == 0 && isInSell != 1)
-				buyOrders.insert(price, amount);
-			else if (isInBuy == 1 && isInSell != 1)
-				buyOrders.addValue(price, amount);
-			else if (isInBuy != 1 && isInSell == 1)
-				System.out.println("process inBuy, get difference, truncate or subtract, place inSell");
-			else if (isInBuy != 1 && isInSell != 1)
-				buyOrders.insert(price, amount);
+				buyOrders.push(price, amount);
+			else {
+				if (buyOrders.getCurrentIndex() == 0 && isInSell == 1 || isInBuy == 1 && isInSell == 1)
+					return;
+				if (isInBuy == 1 && isInSell != 1)
+					buyOrders.addValueToNode(price, amount);
+				else {
+					if (isInBuy != 1 && isInSell == 1)
+						return;
+					if (isInBuy != 1 && isInSell != 1)
+						buyOrders.insert(price, amount);
+				}
+			}
+    }
+
+    public void purchaseBuyOrder(int price, int amount){
+        if (buyOrders.isIndexInChain(price) == 1 && sellOrders.isIndexInChain(price) != 1)
+			sellOrders.subtractFromNode(price, amount);
     }
 
 }
