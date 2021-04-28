@@ -8,9 +8,11 @@ public class TestLListDBG {
     private static  LinkedListDebug lld = new LinkedListDebug();
 
     public static void main(String[] args) {
-            lld.setAsc(true);
+
 
         while (true) {
+            lld.setAsc(false);
+
             int rint = rnd.nextInt(5) + 1;
             if (rint == 1)
                 action1();
@@ -24,13 +26,13 @@ public class TestLListDBG {
                 action5();
 
             String map = lld.printList();
-            boolean validate = lld.validate(map);
+            boolean validate = lld.validate(map,false);
             if (!validate) {
+                System.out.println("ERROR!");
                 System.out.println(rint);
                 System.out.println(map);
                 break;
             }
-
 
         }
 
