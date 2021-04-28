@@ -220,24 +220,61 @@ public class LinkedListDebug {
         return out += "-->end";
     }
 
-    public boolean validate(String map) {
+    public void stringToList(String map, boolean asc){
+        linkedList = new HashMap<>(); //public for testing only!
+        this.asc = asc; //false for descending
         map = map.replaceAll("-", "");
         String[] sp = map.split(">");
-        if (!"end".equals(sp[sp.length - 1]))
-            return false;
+        currentIndex = Integer.parseInt(sp[0]);
 
-        for (int current = Integer.parseInt(sp[0]), next = current, t = 1; t < sp.length - 1; ++t) {
-            String[] ssp = sp[t].replaceAll("\\{", "").replaceAll("}", "").split(":");
-            current = Integer.parseInt(ssp[0]);
-            if (next != current)
-                return false;
-            if (asc) {
-                if (next != 0 && next > current)
-                    return false;
-            } else if (next != 0 && next < current)
-                return false;
-            next = Integer.parseInt(ssp[1]);
+        for(int t=1;t<sp.length-2;t++){
+            String s = sp[t].substring(1,sp[t].length()-1);
+            String[] ss = s.split(":");
+            int current = Integer.parseInt(ss[0]);
+            int previous = Integer.parseInt(ss[1]);
+            int value = Integer.parseInt(ss[2]);
+            Node node = new Node();
+            node.previousIndex = previous;
+            node.value = value;
+            linkedList.put(current,node);
         }
+    }
+
+    public boolean validate(String map, boolean asc) {
+        map = map.replaceAll("-", "");
+        String[] sp = map.split(">");
+
+        if (!"end".equals(sp[sp.length - 1])) {
+            return false;
+        }
+
+        int current = Integer.parseInt(sp[0]);
+        if(current==0){
+            if(!map.equals("0>end")){
+                return false;
+            }
+        }
+
+        for(int t=1;t<sp.length-2;t++){
+            String s = sp[t].substring(1,sp[t].length()-1);
+            String[] ss = s.split(":");
+            int confirm = Integer.parseInt(ss[0]);
+            if(confirm!=current){
+                return false;}
+            int nnext = Integer.parseInt(ss[1]);
+            if(asc){
+                if(!(nnext!=0 && nnext<current)) {
+                    return false;
+                }
+            }
+            else if(!asc){
+                if(!(nnext!=0 && nnext>current)) {
+                    return false;
+                }
+            }
+            current = nnext;
+        }
+
         return true;
     }
 }
