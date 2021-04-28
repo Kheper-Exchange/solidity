@@ -13,34 +13,21 @@ public class LinkedListDebug {
     public int getCurrentIndex() {
         return currentIndex;
     }
-    public void addValue(int index, int value){
+    public void addValueToNode(int index, int value){
         putNode(index, linkedList.get(index).previousIndex, linkedList.get(index).value+value);
     }
+    public void subtractFromNode(int index, int num){
+        int value = linkedList.get(index).value;
+        if(value<num) return; //we cannot make this call
+        int subtracted = value-num;
+        if(subtracted > 0 && (subtracted<(value/100))) return; // do not leave 1% or less, we do not want to make dust!
 
-    public int[] searchBySubtracting(int num){
-        int index = currentIndex;
-
-        while(num>0 && linkedList.get(index).previousIndex!=0) {
-            int val = linkedList.get(index).value;
-            if (val > num) {
-                return new int[]{val - num, index,0};
-            }
-            else if (linkedList.get(index).previousIndex == 0) {
-                if (val >= num) {
-                    return new int[]{val - num, index,0};
-                } else {
-                    return new int[]{0, index, num - val};
-                }
-            }
-            else{
-                num = num-val;
-                if(num==0){
-                    return new int[]{0,index,0};
-                }
-            }
+        if(subtracted==0){pop(); return;}
+        else{
+            putNode(index, linkedList.get(index).previousIndex, subtracted);
         }
-        return new int[]{1};
     }
+
 
     //===============ADDED CLASSES END  HERE===================
 
