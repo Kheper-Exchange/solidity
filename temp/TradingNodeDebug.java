@@ -3,7 +3,6 @@ import java.util.Map;
 
 public class TradingNodeDebug {
 
-
     private static int lowestId;
     private static int currentid;
 
@@ -82,7 +81,6 @@ public class TradingNodeDebug {
     }
 
 
-
     public static void main(String[] args){
         String addressA = "x00000A", addressB = "x00000B", addressC = "x00000C", addressD = "x00000D";
         ask(addressA, 213);
@@ -105,10 +103,10 @@ public class TradingNodeDebug {
 
     }
 
-
 }
 
 class Bid{
     String address;
     Integer amount;
 }
+
