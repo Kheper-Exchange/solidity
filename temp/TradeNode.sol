@@ -59,6 +59,7 @@ contract TradeNode {
     function findId(uint amount) private view returns(uint) {
         uint t=lowestId;
         while (t< currentId) {
+            if(t==10000) return 0; //not found
 			uint amtAt = statusMap[t].amount;
 			if (amtAt == amount)
 				return t++;
@@ -73,6 +74,7 @@ contract TradeNode {
     function findAmount(uint amount) private view returns(uint) {
         uint t=lowestId;
         while (t< currentId) {
+            if(t==10000) return 0; //not found
             uint amtAt = statusMap[t].amount;
             if (amtAt == amount)
                 return amount;
