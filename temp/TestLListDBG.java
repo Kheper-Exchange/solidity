@@ -10,29 +10,30 @@ public class TestLListDBG {
     public static void main(String[] args) {
 
 
-        while (true) {
-            lld.setAsc(false);
+        for (int t=0;t<1000;t++) {
+            lld.setAsc(true);
 
             int rint = rnd.nextInt(5) + 1;
             if (rint == 1)
-                action1();
+                action1("t1");
             if (rint == 2)
                 action2();
             if (rint == 3)
-                action3();
+                action3("t1");
             if (rint == 4)
                 action4();
             if (rint == 5)
                 action5();
 
             String map = lld.printList();
-            boolean validate = lld.validate(map,false);
-            if (!validate) {
-                System.out.println("ERROR!");
-                System.out.println(rint);
-                System.out.println(map);
-                break;
-            }
+            System.out.println(map);
+//            boolean validate = lld.validate(map,true);
+//            if (!validate) {
+//                System.out.println("ERROR!");
+//                System.out.println(rint);
+//                System.out.println(map);
+//                break;
+//            }
 
         }
 
@@ -40,11 +41,11 @@ public class TestLListDBG {
     }
 
 
-    public static  void action1() {
+    public static  void action1(String usrAddress) {
         System.out.println("---------------");
         int a = rnd.nextInt(1000) + 2, b = rnd.nextInt(1000) + 2;
         System.out.println("Pushing index:" + a + " value:" + b + " - " + lld.printList());
-        lld.push(a, b);
+        lld.push(usrAddress, a, b);
         System.out.println("Result - " + lld.printList());
     }
 
@@ -55,11 +56,11 @@ public class TestLListDBG {
         System.out.println("Result - " + lld.printList());
     }
 
-    public static  void action3() {
+    public static  void action3(String usrAddress) {
         System.out.println("---------------");
         int a = rnd.nextInt(1000) + 2, b = rnd.nextInt(1000) + 2;
         System.out.println("Inserting index:" + a + " value:" + b + " - " + lld.printList());
-        lld.insert(a, b);
+        lld.insert(usrAddress, a, b);
         System.out.println("Result - " + lld.printList());
     }
 
