@@ -97,6 +97,12 @@ abstract contract Ownable is Context {
 abstract contract NewToken {
   function owner() public view virtual returns(address);
 }
+abstract contract DepositToken{
+  function allowance(address owner, address spender) virtual external view returns(uint256);
+  function transferFrom(address sender, address recipient, uint256 amount) virtual external returns(bool);
+  function balanceOf(address account) virtual external view returns(uint256);
+  function transfer(address recipient, uint256 amount) virtual external returns(bool);
+}
 
 contract TokenRegistration is Ownable {
     
@@ -221,9 +227,55 @@ contract TokenRegistration is Ownable {
 
 }
 
+contract AssetManagement{
+    using SafeMath for uint;
+    mapping(address=>mapping(address=>uint)) private allowedAssets; //user, token, amount
+
+    function depositTokens(address tokenAddress, uint amount) external returns(bool) {
+        DepositToken deptok = DepositToken(tokenAddress);
+        
+        uint balance = deptok.balanceOf(msg.sender);
+        require(balance>=amount);
+        
+        uint allowed = deptok.allowance(msg.sender, address(this));
+        require(allowed>=amount);
+
+        deptok.transferFrom(msg.sender, address(this), amount);
+        allowedAssets[msg.sender][tokenAddress] = allowedAssets[msg.sender][tokenAddress].add(amount);
+        
+        return true;
+    }
+    
+    
+  function getAllowedTokens(address tokenAddress) public view returns (uint){
+      return allowedAssets[msg.sender][tokenAddress];
+  }    
+  
+  function getTokensInExchange(address tokenAddress) public view returns (uint){
+    //TODO!
+  } 
+    
+  function withdrawAllowedTokens(address tokenAddress, uint amount) external returns(bool) {
+        DepositToken deptok = DepositToken(tokenAddress);
+        uint processedAssets = getTokensInExchange(tokenAddress);
+        uint allowed = getAllowedTokens(tokenAddress).add(processedAssets);
+        require(allowed>0 && allowed>=amount);
+
+        allowedAssets[msg.sender][tokenAddress] = allowed.sub(allowed);
+        deptok.transfer(msg.sender, allowed); 
+        
+        return true;
+  }
+  
+  
+  
+//todo
+    
+    
+}
 
 
-contract SHU is Context, IERC20, TokenRegistration {
+contract SHU is Context, IERC20, TokenRegistration, AssetManagement {
   using SafeMath
   for uint256;
 
