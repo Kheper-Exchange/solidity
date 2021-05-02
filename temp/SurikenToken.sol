@@ -241,6 +241,7 @@ contract AssetManagement{
         require(allowed>=amount);
 
         deptok.transferFrom(msg.sender, address(this), amount);
+        refreshAllowed(tokenAddress);
         allowedAssets[msg.sender][tokenAddress] = allowedAssets[msg.sender][tokenAddress].add(amount);
         
         return true;
@@ -251,26 +252,36 @@ contract AssetManagement{
       return allowedAssets[msg.sender][tokenAddress];
   }    
   
-  function getTokensInExchange(address tokenAddress) public view returns (uint){
-    //TODO!
-  } 
-    
-  function withdrawAllowedTokens(address tokenAddress, uint amount) external returns(bool) {
+
+  function withdrawTokens(address tokenAddress, uint amount) external returns(bool) {
         DepositToken deptok = DepositToken(tokenAddress);
-        uint processedAssets = getTokensInExchange(tokenAddress);
-        uint allowed = getAllowedTokens(tokenAddress).add(processedAssets);
+        refreshAllowed(tokenAddress);
+        uint allowed = getAllowedTokens(tokenAddress);
         require(allowed>0 && allowed>=amount);
 
-        allowedAssets[msg.sender][tokenAddress] = allowed.sub(allowed);
         deptok.transfer(msg.sender, allowed); 
-        
+
         return true;
   }
   
   
+    function getTokensInExchange(address tokenAddress) public view returns (uint){
+      //this requires diving deep into exchange to see processed numbers.
+    //TODO!
+  } 
   
-//todo
+  function refreshAllowed(address tokenAddress) private returns(bool){
+      uint exchToks = getTokensInExchange(tokenAddress);
+      if(exchToks==0) return true;
+      allowedAssets[msg.sender][tokenAddress] = allowedAssets[msg.sender][tokenAddress].add(exchToks);
+      //TODO alter exchange tokens
+      //this requires diving deep into exchange to see processed numbers.
+    return true;
+  }
     
+  
+  
+  
     
 }
 
