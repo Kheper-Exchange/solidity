@@ -6,7 +6,7 @@ public class LinkedListDebug {
     //1 is reserved for no-result!
 	//2 is reserved for not found
 
-        Map<Integer, Node> linkedList = new HashMap<>(); //public for testing only!
+    Map<Integer, Node> linkedList = new HashMap<>(); //public for testing only!
     private int currentIndex;
     private boolean asc = true; //false for descending
 
@@ -14,25 +14,24 @@ public class LinkedListDebug {
     public int getCurrentIndex() {
         return currentIndex;
     }
+
     public void addValueToNode(int index, int value){
         putNode(index, linkedList.get(index).previousIndex, linkedList.get(index).value+value);
     }
+
     public void subtractFromNode(int index, int num){
         int value = linkedList.get(index).value;
         if(value<num) return; //we cannot make this call
         int subtracted = value-num;
-        if (subtracted == 0 || subtracted >= value / 100)
-			if (subtracted == 0)
-				pop();
-			else
-				putNode(index, linkedList.get(index).previousIndex, subtracted);
+        if (subtracted == 0 || subtracted >= value / 100) {
+            if (subtracted == 0) {
+                pop();
+            } else {
+                putNode(index, linkedList.get(index).previousIndex, subtracted);
+            }
+        }
     }
-
-
     //===============ADDED CLASSES END  HERE===================
-
-
-
 
     public void setAsc(boolean isAscending) {
         asc = isAscending;
@@ -44,53 +43,31 @@ public class LinkedListDebug {
         node.value = num;
         linkedList.put(index, node);
     }
-//
-
-//
-//    public void setCurrentIndex(int num) {
-//        currentIndex = num;
-//    }
-//
-//    public int getValueAt(int index) {
-//        return linkedList.get(index).value;
-//    }
-//
-//    public void setValueAt(int index, int num) {
-//        Node change = linkedList.get(index);
-//        change.value = num;
-//        putNode(index, change.previousIndex, change.value);
-//    }
-//
-//    public int getPreviousIndexAt(int index) {
-//        return linkedList.get(index).previousIndex;
-//    }
-//
-//    public void setPreviousIndexAt(int index, int num) {
-//        Node change = linkedList.get(index);
-//        change.previousIndex = num;
-//        putNode(index, change.previousIndex, change.value);
-//    }
 
     public void push(int index, int num) {
-        if ((asc && index <= currentIndex) || (!asc && index >= currentIndex && currentIndex != 0))
+        if ((asc && index <= currentIndex) || (!asc && index >= currentIndex && currentIndex != 0)) {
             return;
+        }
         putNode(index, currentIndex, num);
         currentIndex = index;
     }
 
     public void pop() {
-        if (currentIndex != 0)
+        if (currentIndex != 0) {
             currentIndex = linkedList.get(currentIndex).previousIndex;
+        }
     }
 
     public void insert(int index, int num) {
-        if (isIndexInChain(index)!=1 && currentIndex != index)
-            if (currentIndex == 0)
+        if (isIndexInChain(index)!=1 && currentIndex != index) {
+            if (currentIndex == 0) {
                 push(index, num);
-            else if (asc)
+            } else if (asc) {
                 insertAtAsc(index, num);
-            else
+            } else {
                 insertAtDesc(index, num);
+            }
+        }
     }
 
     //is internal
@@ -103,8 +80,9 @@ public class LinkedListDebug {
 
         int closestIndex = findClosestIndexDesc(index);
         if (closestIndex == 1) return;
-        if (closestIndex == 0)
+        if (closestIndex == 0) {
             closestIndex = findPointerIndex(closestIndex);
+        }
         if (closestIndex == 1) return;
         putNode(index, linkedList.get(closestIndex).previousIndex, num);
         linkedList.get(closestIndex).previousIndex = index;
@@ -227,8 +205,10 @@ public class LinkedListDebug {
         String[] sp = map.split(">");
         currentIndex = Integer.parseInt(sp[0]);
 
-        for(int t=1;t<sp.length-2;t++){
+        for(int t=1;t<sp.length-1;t++){
             String s = sp[t].substring(1,sp[t].length()-1);
+            if(s.startsWith("{")) s=s.substring(1);
+            if(s.endsWith("}")) s = s.substring(s.length()-1);
             String[] ss = s.split(":");
             int current = Integer.parseInt(ss[0]);
             int previous = Integer.parseInt(ss[1]);
