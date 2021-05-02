@@ -7,13 +7,13 @@ import java.util.Map;
 
 public class TradingNodeDebug {
 
-    private static int lowestId;
-    private static int currentId;
+    private int lowestId;
+    private int currentId;
 
-    private static Map<Integer, Bid> statusMap = new HashMap<>();
-    private static Map<String, Integer> withdrawnAmount = new HashMap<>();
+    private Map<Integer, Bid> statusMap = new HashMap<>();
+    private Map<String, Integer> withdrawnAmount = new HashMap<>();
 
-    public static boolean placeAsk(String usrAddress, int amount){
+    public boolean placeAsk(String usrAddress, int amount){
         Bid bid = new Bid();
         bid.address = usrAddress;
         bid.amount = amount;
@@ -22,7 +22,7 @@ public class TradingNodeDebug {
         return true;
     }
 
-    public static boolean answer(int amount){
+    public boolean answer(int amount){
         if(!(amount>0)) return false; //require
         int totalamt = getTotalAmount();
 
@@ -43,7 +43,7 @@ public class TradingNodeDebug {
 
     //-----------------------------------------------------------
 
-    public static int getTotalAmount(){
+    public int getTotalAmount(){
         int ret = 0;
         for(int y = lowestId; y< currentId; ++y) {
             if(y==10000) return 0;
@@ -54,7 +54,7 @@ public class TradingNodeDebug {
 
 
 
-    private static int findId(int amount){
+    private int findId(int amount){
         int t=lowestId;
         while (t< currentId) {
             if(t==10000) return 0; //not found
@@ -69,7 +69,7 @@ public class TradingNodeDebug {
         return 0; //not found
     }
 
-    private static int findAmount(int amount){
+    private int findAmount(int amount){
         int t=lowestId;
         while (t< currentId) {
             if(t==10000) return 0; //not found
@@ -86,7 +86,7 @@ public class TradingNodeDebug {
 
 
 
-    private static int findAllowedAmount(String address){
+    private int findAllowedAmount(String address){
         int ret = 0;
         int t=0;
         while (t<lowestId) {
@@ -99,7 +99,7 @@ public class TradingNodeDebug {
         return ret;
     }
 
-    private static boolean withdrawAll(String usrAddress){
+    private boolean withdrawAll(String usrAddress){
         int amt = findAllowedAmount(usrAddress);
         if(amt!=0) {
             withdrawnAmount.put(usrAddress, withdrawnAmount.get(usrAddress)+amt);
@@ -108,38 +108,37 @@ public class TradingNodeDebug {
     }
 
 //-----------------------------------------------------------
-    public static String asString(){
-        String ret = "";
-        int t=lowestId;
-        while (t< currentId) {
-            ret += "[" + t + ":" + statusMap.get(t).address + ":" + statusMap.get(t).amount + "]";
-            ++t;
-        }
-        return ret+"*";
-    }
-
-
-    public static void main(String[] args){
-        String addressA = "x00000A", addressB = "x00000B", addressC = "x00000C", addressD = "x00000D";
-        placeAsk(addressA, 213);
-        placeAsk(addressB, 2);
-        placeAsk(addressC, 5);
-
-        answer(220);
-
-        System.out.println(asString());
-        placeAsk(addressA, 213);
-        placeAsk(addressB, 2);
-        placeAsk(addressC, 5);
-        System.out.println(asString());
-
-        answer(221);
-        System.out.println(asString());
-        System.out.println(findAllowedAmount(addressA));
-        withdrawAll(addressA);
-        System.out.println(findAllowedAmount(addressA));
-
-    }
+//    public String asString(){
+//        String ret = "";
+//        int t=lowestId;
+//        while (t< currentId) {
+//            ret += "[" + t + ":" + statusMap.get(t).address + ":" + statusMap.get(t).amount + "]";
+//            ++t;
+//        }
+//        return ret+"*";
+//    }
+//
+//    public void main(String[] args){
+//        String addressA = "x00000A", addressB = "x00000B", addressC = "x00000C", addressD = "x00000D";
+//        placeAsk(addressA, 213);
+//        placeAsk(addressB, 2);
+//        placeAsk(addressC, 5);
+//
+//        answer(220);
+//
+//        System.out.println(asString());
+//        placeAsk(addressA, 213);
+//        placeAsk(addressB, 2);
+//        placeAsk(addressC, 5);
+//        System.out.println(asString());
+//
+//        answer(221);
+//        System.out.println(asString());
+//        System.out.println(findAllowedAmount(addressA));
+//        withdrawAll(addressA);
+//        System.out.println(findAllowedAmount(addressA));
+//
+//    }
 
 }
 
