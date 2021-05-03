@@ -246,23 +246,23 @@ contract AssetManagement{
         
         return true;
     }
-    
-    
-  function getAllowedTokens(address tokenAddress) public view returns (uint){
-      return allowedAssets[msg.sender][tokenAddress];
-  }    
   
 
   function withdrawTokens(address tokenAddress, uint amount) external returns(bool) {
         DepositToken deptok = DepositToken(tokenAddress);
         refreshAllowed(tokenAddress);
-        uint allowed = getAllowedTokens(tokenAddress);
+        uint allowed = allowedAssets[msg.sender][tokenAddress];
         require(allowed>0 && allowed>=amount);
 
         deptok.transfer(msg.sender, allowed); 
 
         return true;
   }
+  
+    function cancelExchanging(address tokenAddress) external returns(bool) {
+    //TODO!
+    }
+
   
   
     function getTokensInExchange(address tokenAddress) public view returns (uint){
